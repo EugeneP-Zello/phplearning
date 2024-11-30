@@ -13,6 +13,7 @@ if(!empty($_GET["apiKey"])) {
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER => $headers,
+        CURLOPT_CUSTOMREQUEST => "DELETE" // PUT adds star, GET checks if starred, DELETE removes star
     ]);
 
     $result = curl_exec($ch);

@@ -2,6 +2,10 @@
 
 class TaskManager
 {
+    public function __construct(private readonly TaskGateway $gateway)
+    {
+
+    }
     public function process(string $method, ?string $id): void {
         if ($id === null) {
             if ($method === "GET") {

@@ -7,10 +7,17 @@ require dirname(__DIR__) . "/vendor/autoload.php";
 
 set_exception_handler("ErrorProcessor::process");
 
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
 header("Content-Type: application/json; charset=UTF-8");
 
-$db = new Database("localhost", "taskdb", "task_user", "password");
-$db->Connect();
+$testClassObject = new TestClass('Hello, World!');
+echo $testClassObject->getName() . "\n<br>";
+
+$db = new MyDatabase($_ENV["DB_HOST"], $_ENV["DB"], $_ENV["DB_USER"], $_ENV["DB_PASSWORD"]);
+
+$tasks = new TaskGateway($db);
 
 echo $_SERVER["REQUEST_URI"]. "\n<br>";
 $fullPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
@@ -30,7 +37,7 @@ if ($resource != "tasks") {
     echo "Resource not found\n";
 }
 
-$manager = new TaskManager();
+$manager = new TaskManager($tasks);
 $manager->process($method, $id);
 
 ?>

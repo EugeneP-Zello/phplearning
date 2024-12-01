@@ -14,7 +14,8 @@ class MyDatabase
     {
         $dataSourceName = "mysql:host={$this->host}:8889;dbname={$this->name};charset=utf8";
        return new PDO($dataSourceName, $this->user, $this->password, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
     }
 }

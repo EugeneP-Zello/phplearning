@@ -2,7 +2,7 @@
 
 class TaskManager
 {
-    public function process($method, $id) {
+    public function process(string $method, ?string $id): void {
         if ($id === null) {
             if ($method === "GET") {
                 echo "Getting all tasks\n";

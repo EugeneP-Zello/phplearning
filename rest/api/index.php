@@ -1,7 +1,10 @@
 <?php
 // http://localhost:8044/api/tasks/123
 
- require dirname(__DIR__) . "/vendor/autoload.php";
+declare(strict_types=1);
+
+require dirname(__DIR__) . "/vendor/autoload.php";
+
 echo $_SERVER["REQUEST_URI"]. "\n<br>";
 $fullPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 echo $fullPath . "\n<br>";

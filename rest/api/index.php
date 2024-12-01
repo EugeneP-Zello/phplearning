@@ -9,6 +9,9 @@ set_exception_handler("ErrorProcessor::process");
 
 header("Content-Type: application/json; charset=UTF-8");
 
+$db = new Database("localhost", "taskdb", "task_user", "password");
+$db->Connect();
+
 echo $_SERVER["REQUEST_URI"]. "\n<br>";
 $fullPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 echo $fullPath . "\n<br>";

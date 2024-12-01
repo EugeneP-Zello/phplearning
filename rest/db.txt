@@ -1,0 +1,18 @@
+1. Create db and user:
+CREATE DATABASE taskdb;
+CREATE USER 'task_user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON taskdb.* TO 'task_user'@'localhost';
+FLUSH PRIVILEGES;
+
+2. Create table:
+create table taskdb.tasks
+(
+    id       int auto_increment primary key,
+    name     char(128)          not null,
+    priority int                null,
+    finished tinyint(1) default 0 not null
+);
+
+create index tasks_name_index
+    on taskdb.tasks (name);
+

@@ -9,8 +9,7 @@ class TaskManager
             } elseif ($method === "POST") {
                 echo "Creating a new task\n";
             } else {
-                http_response_code(405);
-                echo "Method not allowed\n";
+                $this->notifyNotAllowed(["GET", "POST"]);
             }
         } else {
             if ($method === "GET") {
@@ -20,9 +19,13 @@ class TaskManager
             } elseif ($method === "DELETE") {
                 echo "Delete task $id\n<br>";
             } else {
-                http_response_code(405);
-                echo "Method not allowed\n";
+                $this->notifyNotAllowed(["GET", "PATCH", "DELETE"]);
             }
         }
+    }
+
+    private function notifyNotAllowed(array $allowed): void {
+        http_response_code(405);
+        header("Allow: " . implode(", ", $allowed));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 // http://localhost:8044/api/tasks/123
+
+ require dirname(__DIR__) . "/vendor/autoload.php";
 echo $_SERVER["REQUEST_URI"]. "\n<br>";
 $fullPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 echo $fullPath . "\n<br>";
@@ -18,7 +20,7 @@ if ($resource != "tasks") {
     echo "Resource not found\n";
 }
 
-require dirname(__DIR__) . "/src/task.php";
 $manager = new TaskManager();
 $manager->process($method, $id);
+
 ?>

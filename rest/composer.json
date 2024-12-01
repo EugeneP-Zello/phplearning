@@ -1,0 +1,15 @@
+{
+  "name": "phplearning/taskmanager-1.0",
+  "description": "Rest API demp project",
+  "authors": [
+    {
+      "name": "Eugene Potapov",
+      "email": "epotapov@zello.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    }
+  }
+}

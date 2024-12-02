@@ -15,4 +15,12 @@ class UserGateway
         $statement->execute();
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getByLogin(string $login): array | false
+    {
+        $statement = $this->pdo->prepare("SELECT * FROM users WHERE login = :login");
+        $statement->bindValue('login', $login, PDO::PARAM_STR);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
 }

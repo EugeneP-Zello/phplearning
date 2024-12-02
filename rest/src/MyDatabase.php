@@ -2,6 +2,7 @@
 
 class MyDatabase
 {
+    private ?PDO $pdo = null;
     public function __construct(
         private string $host,
         private string $name,
@@ -12,11 +13,15 @@ class MyDatabase
 
     public function Connect(): PDO
     {
+        if ($this->pdo !== null) {
+            return $this->pdo;
+        }
         $dataSourceName = "mysql:host={$this->host}:8889;dbname={$this->name};charset=utf8";
-       return new PDO($dataSourceName, $this->user, $this->password, [
+        $this->pdo = new PDO($dataSourceName, $this->user, $this->password, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
+        return $this->pdo;
     }
 }
 

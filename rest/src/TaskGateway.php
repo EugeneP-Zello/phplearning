@@ -8,9 +8,18 @@ class TaskGateway
         $this->pdo = $database->Connect();
     }
 
-    public function getAll(): array
+    public function getAll(int $uid): array
     {
-        $statement = $this->pdo->query("SELECT * FROM tasks ORDER BY name");
+        $sql = "SELECT * FROM tasks WHERE user_id = :uid ORDER BY name";
+        if ($uid === 0) {
+            $sql = "SELECT * FROM tasks ORDER BY name";
+        }
+        $statement = $this->pdo->prepare($sql);
+        if ($uid !== 0) {
+            $statement->bindValue('uid', $uid, PDO::PARAM_INT);
+        }
+        $statement->execute();
+
         $allTasks = [];
         while ($task = $statement->fetch(PDO::FETCH_ASSOC)) {
             $task['finished'] = (bool)$task['finished'];
@@ -19,10 +28,17 @@ class TaskGateway
         return $allTasks;
     }
 
-    public function get(int $id): array | false
+    public function get(int $id, int $uid): array | false
     {
-        $statement = $this->pdo->prepare("SELECT * FROM tasks WHERE id = :id");
+        $sql = "SELECT * FROM tasks WHERE id = :id AND user_id = :uid";
+        if ($uid === 0) {
+            $sql = "SELECT * FROM tasks WHERE id = :id";
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->bindValue('id', $id, PDO::PARAM_INT);
+        if ($uid !== 0) {
+            $statement->bindValue('uid', $uid, PDO::PARAM_INT);
+        }
         $statement->execute();
         $task = $statement->fetch(PDO::FETCH_ASSOC);
         if ($task !== false) {
@@ -31,16 +47,18 @@ class TaskGateway
         return $task;
     }
 
-    public function addNew(array $task): string
+    public function addNew(array $task, int $uid): string
     {
-        $statement = $this->pdo->prepare("INSERT INTO tasks (name, priority, finished) VALUES (:name, :priority, :finished)");
+        $statement = $this->pdo->prepare("INSERT INTO tasks (name, priority, finished, user_id) VALUES (:name, :priority, :finished, :uid)");
         $statement->bindValue('name', $task['name'], PDO::PARAM_STR);
         $statement->bindValue('finished', $task['finished'] ?? false, PDO::PARAM_BOOL);
+
         if (empty($task['priority'])) {
             $statement->bindValue('priority', null, PDO::PARAM_NULL);
         } else {
             $statement->bindValue('priority', $task['priority'], PDO::PARAM_INT);
         }
+        $statement->bindValue('uid', $uid, PDO::PARAM_INT);
         $statement->execute();
         return $this->pdo->lastInsertId();
     }
@@ -74,10 +92,15 @@ class TaskGateway
         return $statement->rowCount();
     }
 
-    public function drop(int $id): int
+    public function drop(int $id, int $uid): int
     {
-        $statement = $this->pdo->prepare("DELETE FROM tasks WHERE id = :id");
+        $sql = "DELETE FROM tasks WHERE id = :id AND user_id = :uid";
+        if ($uid === 0) {
+            $sql = "DELETE FROM tasks WHERE id = :id";
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->execute(['id' => $id]);
+        $statement->bindValue('uid', $uid, PDO::PARAM_INT);
         return $statement->rowCount();
     }
 }

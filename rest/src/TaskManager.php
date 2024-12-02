@@ -1,15 +1,15 @@
 <?php
 
-class TaskManager
+readonly class TaskManager
 {
-    public function __construct(private readonly TaskGateway $gateway)
+    public function __construct(private TaskGateway $gateway, private int $uid)
     {
 
     }
     public function process(string $method, ?string $id): void {
         if ($id === null) {
             if ($method === "GET") {
-                echo json_encode($this->gateway->getAll());
+                echo json_encode($this->gateway->getAll($this->uid));
             } elseif ($method === "POST") {
                 //print_r($_POST);
                 $newTask = (array)json_decode(file_get_contents('php://input'), true);
@@ -18,13 +18,13 @@ class TaskManager
                     $this->notifyInvalidAttributes($invalids);
                     return;
                 }
-                $id = $this->gateway->addNew($newTask);
+                $id = $this->gateway->addNew($newTask, $this->uid);
                 $this->respondCreated($id);
             } else {
                 $this->notifyNotAllowed(["GET", "POST"]);
             }
         } else {
-            $task = $this->gateway->get((int)$id);
+            $task = $this->gateway->get((int)$id, $this->uid);
             if ($task === false) {
                 $this->notifyNotFound($id);
                 return;
@@ -41,7 +41,7 @@ class TaskManager
                 $updated = $this->gateway->update((int)$id, $newTask);
                 echo json_encode(["result" => $updated === 0 ? "No changes" : "Task updated"]);
             } elseif ($method === "DELETE") {
-                $dropped = $this->gateway->drop((int)$id);
+                $dropped = $this->gateway->drop((int)$id, $this->uid);
                 echo json_encode(["result" => $dropped === 0 ? "Task not found" : "Task deleted"]);
             } else {
                 $this->notifyNotAllowed(["GET", "PATCH", "DELETE"]);
